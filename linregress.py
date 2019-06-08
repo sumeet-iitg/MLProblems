@@ -12,12 +12,14 @@ def computeLoss(ys, xs, W):
 def computeGradNorm(ys,xs, W):
     data_sz = len(ys)
     dWs =  (np.dot(W.T,xs) - ys)*xs
-    dW_norm = np.sum(dWs, axis=1)/(2*data_sz)
+    dW_norm = np.sum(dWs, axis=1, keepdims=True)/(2*data_sz)
     return dW_norm
 
 def linRegress(ys, xs, lr=0.0001, max_iter = 10000):
     '''
+        ys: n x 1
         xs: dim x n 
+        
     '''
     
     W = np.random.uniform(-1,1, size=(xs.shape[0],1))
@@ -26,7 +28,7 @@ def linRegress(ys, xs, lr=0.0001, max_iter = 10000):
     iter_ct = 0
     while iter_ct < max_iter:
         dW = computeGradNorm(ys, xs, W)
-        print "grads:{}".format(dW)
+        print "grads:{} shape:{}".format(dW, dW.shape)
         W = W - lr * dW
         prev_loss = loss
         loss = computeLoss(ys, xs, W)
@@ -53,6 +55,7 @@ if __name__ == "__main__":
     m = len(math_val)
     x0 = np.ones(m)
     xs = np.array([x0, math_val, read_val]).T
-    W, avg_loss = linRegress(write_val.T, xs.T)
+    W, avg_loss = linRegress(write_val, xs.T)
+    print "Final Weights:{}".format(W)
     
     
